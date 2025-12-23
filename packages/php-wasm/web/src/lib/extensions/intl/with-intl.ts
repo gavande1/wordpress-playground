@@ -89,7 +89,7 @@ export async function withIntl(
 			if (
 				!FSHelpers.fileExists(
 					phpRuntime.FS,
-					`${phpRuntime.ENV.ICU_DATA}/${dataName}`
+					`${phpRuntime.ENV.ICU_DATA}/icudt74l.dat`
 				)
 			) {
 				phpRuntime.FS.mkdirTree(phpRuntime.ENV.ICU_DATA);
