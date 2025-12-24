@@ -24,7 +24,7 @@ export async function withXdebug(
 		...options,
 		ENV: {
 			...options.ENV,
-			PHP_INI_SCAN_DIR: '/internal/shared/extensions',
+			PHP_INI_SCAN_DIR: '/internal/private/extensions',
 		},
 		onRuntimeInitialized: (phpRuntime: PHPRuntime) => {
 			if (options.onRuntimeInitialized) {
@@ -37,19 +37,19 @@ export async function withXdebug(
 			if (
 				!FSHelpers.fileExists(
 					phpRuntime.FS,
-					'/internal/shared/extensions'
+					phpRuntime.ENV.PHP_INI_SCAN_DIR
 				)
 			) {
-				phpRuntime.FS.mkdirTree('/internal/shared/extensions');
+				phpRuntime.FS.mkdirTree(phpRuntime.ENV.PHP_INI_SCAN_DIR);
 			}
 			if (
 				!FSHelpers.fileExists(
 					phpRuntime.FS,
-					`/internal/shared/extensions/${fileName}`
+					`${phpRuntime.ENV.PHP_INI_SCAN_DIR}/${fileName}`
 				)
 			) {
 				phpRuntime.FS.writeFile(
-					`/internal/shared/extensions/${fileName}`,
+					`${phpRuntime.ENV.PHP_INI_SCAN_DIR}/${fileName}`,
 					new Uint8Array(extension)
 				);
 			}
@@ -59,14 +59,14 @@ export async function withXdebug(
 			if (
 				!FSHelpers.fileExists(
 					phpRuntime.FS,
-					'/internal/shared/extensions/xdebug.ini'
+					`${phpRuntime.ENV.PHP_INI_SCAN_DIR}/xdebug.ini`
 				)
 			) {
-				const ideKey = xdebugOptions?.ideKey || 'PLAYGROUNDCLI';
+				const ideKey = xdebugOptions?.ideKey || 'PHPWASMCLI';
 				phpRuntime.FS.writeFile(
-					'/internal/shared/extensions/xdebug.ini',
+					`${phpRuntime.ENV.PHP_INI_SCAN_DIR}/xdebug.ini`,
 					[
-						'zend_extension=/internal/shared/extensions/xdebug.so',
+						`zend_extension=${phpRuntime.ENV.PHP_INI_SCAN_DIR}/xdebug.so`,
 						'xdebug.mode=debug,develop',
 						'xdebug.start_with_request=yes',
 						`xdebug.idekey="${ideKey}"`,

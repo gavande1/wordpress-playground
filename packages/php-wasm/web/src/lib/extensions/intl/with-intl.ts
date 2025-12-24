@@ -34,8 +34,8 @@ export async function withIntl(
 		...options,
 		ENV: {
 			...options.ENV,
-			PHP_INI_SCAN_DIR: '/internal/shared/extensions',
-			ICU_DATA: '/internal/shared',
+			PHP_INI_SCAN_DIR: '/internal/private/extensions',
+			ICU_DATA: '/internal/private',
 		},
 		onRuntimeInitialized: (phpRuntime: PHPRuntime) => {
 			if (options.onRuntimeInitialized) {
@@ -48,19 +48,19 @@ export async function withIntl(
 			if (
 				!FSHelpers.fileExists(
 					phpRuntime.FS,
-					'/internal/shared/extensions'
+					phpRuntime.ENV.PHP_INI_SCAN_DIR
 				)
 			) {
-				phpRuntime.FS.mkdirTree('/internal/shared/extensions');
+				phpRuntime.FS.mkdirTree(phpRuntime.ENV.PHP_INI_SCAN_DIR);
 			}
 			if (
 				!FSHelpers.fileExists(
 					phpRuntime.FS,
-					`/internal/shared/extensions/${extensionName}`
+					`${phpRuntime.ENV.PHP_INI_SCAN_DIR}/${extensionName}`
 				)
 			) {
 				phpRuntime.FS.writeFile(
-					`/internal/shared/extensions/${extensionName}`,
+					`${phpRuntime.ENV.PHP_INI_SCAN_DIR}/${extensionName}`,
 					new Uint8Array(extension)
 				);
 			}
@@ -70,13 +70,13 @@ export async function withIntl(
 			if (
 				!FSHelpers.fileExists(
 					phpRuntime.FS,
-					'/internal/shared/extensions/intl.ini'
+					`${phpRuntime.ENV.PHP_INI_SCAN_DIR}/intl.ini`
 				)
 			) {
 				phpRuntime.FS.writeFile(
-					'/internal/shared/extensions/intl.ini',
+					`${phpRuntime.ENV.PHP_INI_SCAN_DIR}/intl.ini`,
 					[
-						`extension=/internal/shared/extensions/${extensionName}`,
+						`extension=${phpRuntime.ENV.PHP_INI_SCAN_DIR}/${extensionName}`,
 					].join('\n')
 				);
 			}
@@ -84,7 +84,7 @@ export async function withIntl(
 			 * An ICU data file must be loaded to support Intl extension.
 			 * To achieve this, a shared directory is mounted and referenced
 			 * via the ICU_DATA environment variable.
-			 * By default, this variable is set to '/internal/shared',
+			 * By default, this variable is set to '/internal/private',
 			 * which corresponds to the actual file location.
 			 */
 			if (

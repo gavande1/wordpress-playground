@@ -72,7 +72,7 @@ SupportedPHPVersions.forEach((phpVersion) => {
 				);
 
 				const text = php.readFileAsText(
-					'/internal/shared/extensions/intl.ini'
+					'/internal/private/extensions/intl.ini'
 				);
 
 				php.exit();
@@ -81,7 +81,7 @@ SupportedPHPVersions.forEach((phpVersion) => {
 			}, phpVersion);
 
 			const expected = [
-				'extension=/internal/shared/extensions/intl.so',
+				'extension=/internal/private/extensions/intl.so',
 			].join('\n');
 
 			test.expect(result).toEqual(expected);
@@ -95,7 +95,7 @@ SupportedPHPVersions.forEach((phpVersion) => {
 					})
 				);
 
-				const list = php.listFiles('/internal/shared');
+				const list = php.listFiles('/internal/private');
 
 				php.exit();
 

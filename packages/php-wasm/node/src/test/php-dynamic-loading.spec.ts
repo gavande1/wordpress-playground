@@ -50,14 +50,14 @@ describe.each(phpVersions)('PHP %s', async (phpVersion) => {
 
 		it('has its own ini file and entries', async () => {
 			const entries = php.readFileAsText(
-				'/internal/shared/extensions/xdebug.ini'
+				'/internal/private/extensions/xdebug.ini'
 			);
 
 			const expected = [
-				'zend_extension=/internal/shared/extensions/xdebug.so',
+				'zend_extension=/internal/private/extensions/xdebug.so',
 				'xdebug.mode=debug,develop',
 				'xdebug.start_with_request=yes',
-				'xdebug.idekey="PLAYGROUNDCLI"',
+				'xdebug.idekey="PHPWASMCLI"',
 			].join('\n');
 
 			expect(entries).toEqual(expected);
@@ -207,11 +207,11 @@ describe.each(phpVersions)('PHP %s', async (phpVersion) => {
 
 		it('has its own ini file and entries', async () => {
 			const entries = php.readFileAsText(
-				'/internal/shared/extensions/intl.ini'
+				'/internal/private/extensions/intl.ini'
 			);
 
 			const expected = [
-				'extension=/internal/shared/extensions/intl.so',
+				'extension=/internal/private/extensions/intl.so',
 			].join('\n');
 
 			expect(entries).toEqual(expected);
@@ -222,7 +222,9 @@ describe.each(phpVersions)('PHP %s', async (phpVersion) => {
 			 * The Intl extension is hard-coded to look for the `icudt74l` filename,
 			 * which means the ICU data file must use that exact name.
 			 */
-			expect(php.listFiles('/internal/shared')).toContain('icudt74l.dat');
+			expect(php.listFiles('/internal/private')).toContain(
+				'icudt74l.dat'
+			);
 		});
 
 		it('uses intl functions', async () => {
